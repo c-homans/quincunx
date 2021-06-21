@@ -1,20 +1,21 @@
 from random import choice
 from time import sleep
 from os import system
-#import sys
 from termcolor import colored, cprint
 
-N = 15000
+N = 1500
 n = 20
 bins = [0]*n*2
 
 # TODO: dynamic color control
-move_color = 'blue'
-quincunx_color = None
-output_color = 'blue'
+move_color = None #'blue'
+quincunx_color = 'blue'
+output_color = None #'blue'
 
-move_time = 0.005
-ball_time = 0.1
+move_time = 0.0 #0.005
+ball_time = 0.02 #0.1
+
+scale = 'hundreds'
 
 right_move_icon = colored('\\', move_color) #\\
 left_move_icon = colored('/', move_color) #/
@@ -23,7 +24,7 @@ quincunx = [' '*2*n]*(n)
 for k in range(0, n):
     d = k+1
     quincunx[k] = quincunx[k][:n-d] + '/\\'*(d) + quincunx[k][n+d:] 
-quincunx = list(map(lambda row : colored(row, quincunx_color), quincunx))
+#quincunx = list(map(lambda row : colored(row, quincunx_color), quincunx))
 output = [' '*(n*2)]
 for ball in range(N):
     to_print = quincunx[:]
@@ -31,37 +32,32 @@ for ball in range(N):
     for k in range(n):
         sleep(move_time)
         if choice((True, False)):
-            to_print[k] = to_print[k][:n+offset] + right_move_icon + to_print[k][n+offset+1:]
+            to_print[k] = colored(to_print[k][:n+offset], quincunx_color) + right_move_icon + colored(to_print[k][n+offset+1:], quincunx_color)
             offset += 1
         else:
-            to_print[k] = to_print[k][:n+offset-1] + left_move_icon + to_print[k][n+offset:]
+            to_print[k] = colored(to_print[k][:n+offset-1], quincunx_color) + left_move_icon + colored(to_print[k][n+offset:], quincunx_color)
             offset -= 1
-        if k == n-1:
+        if k == n-1 or move_time > 0:
             system('clear')
+            to_print.insert(0, f'Move time: {move_time}. Rest time: {ball_time}. Ball {ball} of {N}.')
+            to_print.append(' '*(n+offset)+colored('X', output_color))
+            to_print.append(colored('\n'.join(output), output_color))
             print('\n'.join(to_print))
-            print(' '*(n+offset)+colored('X', output_color))
-            print(colored('\n'.join(output), output_color))
     sleep(ball_time)
     bins[n+offset] += 1
     for i, count in enumerate(bins):
         hunds = count // 100
-        tens = (count % 100)// 10
+        tens_mod_100 = (count % 100) // 10
+        tens = count // 10
         ones = count % 10
-        scale = 'hundreds'
-        if scale =='tens':
-            if tens+1 > len(output):
-                output.append(' '*(n*2))
-            for row in range(tens):
-                output[row] =   (output[row][:i] 
-                                + 'X'
-                                + output[row][i+1:])
-            output[tens] = output[tens][:i] + (str(ones) if ones > 0 else ' ') + output[tens][i+1:]
-        elif scale == 'hundreds':
-            if hunds+1 > len(output):
-                output.append(' '*(n*2))
-            for row in range(hunds):
-                output[row] =   (output[row][:i] 
-                                + 'X'
-                                + output[row][i+1:])
-            output[hunds] = output[hunds][:i] + (str(tens) if tens > 0 else ' ') + output[hunds][i+1:]
+
+        (big, small) = (hunds, tens_mod_100) if scale == 'hundreds' else (tens, ones)
+
+        if big+1 > len(output):
+            output.append(' '*(n*2))
+        for row in range(big):
+            output[row] =   (output[row][:i] 
+                            + 'X'
+                            + output[row][i+1:])
+        output[big] = output[big][:i] + (str(small) if count > 0 else ' ') + output[big][i+1:]
 
