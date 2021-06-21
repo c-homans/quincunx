@@ -15,7 +15,7 @@ output_color = None #'blue'
 move_time = 0 #0.005
 ball_time = 0.05 #0.1
 
-scale = 'hundreds'
+scale = 'tens'
 
 right_move_icon = colored('#', move_color) #\\
 left_move_icon = colored('#', move_color) #/
