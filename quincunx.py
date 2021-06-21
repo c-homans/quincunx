@@ -1,21 +1,40 @@
+import sys
+import argparse
+import colorama
 from random import choice
 from time import sleep
 from os import system
 from termcolor import colored, cprint
 
-N = 300
-n = 20
-bins = [0]*n*2
+clear = '\033c'
 
-# TODO: command-line control
+colorama.init()
+
+n = 20
+N = 500
+scale = 'tens'
+move_time = 0 #0.005
+ball_time = 1 #0.1
 move_color = None #'blue'
 quincunx_color = None #None
 output_color = None #'blue'
 
-move_time = 0 #0.005
-ball_time = 0.05 #0.1
 
-scale = 'tens'
+try:
+    n = int(sys.argv[1])
+    N = int(sys.argv[2])
+    scale = sys.argv[3]
+    move_time = float(sys.argv[4]) #0.005
+    ball_time = float(sys.argv[5]) #0.1
+    move_color = sys.argv[6]
+    quincunx_color = sys.argv[7]
+    output_color = sys.argv[8]
+except:
+    pass
+
+bins = [0]*(n*2)
+
+
 
 right_move_icon = colored('#', move_color) #\\
 left_move_icon = colored('#', move_color) #/
@@ -43,12 +62,12 @@ for ball in range(1, N+1):
         else:
             quincunx[k] = format(raw_quincunx[k][:n+pos-1], quincunx_color) + left_move_icon + format(raw_quincunx[k][n+pos:], quincunx_color)
             pos -= 1
-        if k == n-1 or move_time > 0:
-            system('clear')
+        if k == n-1 or (move_time > 0 and k % 3 == 0):
             to_print = quincunx[:]
             to_print.insert(0, f'Move time: {move_time}. Rest time: {ball_time}. Ball {ball} of {N}.')
-            to_print.append(' '*(n+pos)+colored('X', output_color))
+            to_print.append(' '*(n+pos)+colored('@', output_color))
             to_print.append(colored('\n'.join(output), output_color))
+            to_print.insert(0, clear)
             print('\n'.join(to_print))
     sleep(ball_time)
     bins[n+pos] += 1
