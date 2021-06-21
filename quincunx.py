@@ -2,27 +2,45 @@ from random import choice
 from time import sleep
 from os import system
 from termcolor import colored, cprint
+from asciimatics.screen import Screen
+from asciimatics.scene import Scene
+from asciimatics.effects import Print, Cycle
+from asciimatics.renderers import StaticRenderer
+
 
 N = 300
 n = 20
 bins = [0]*n*2
 
 # TODO: command-line control
-move_color = None #'blue'
-quincunx_color = None #None
-output_color = None #'blue'
+move_color = '5' #'blue'
+quincunx_color = '3' #None
+output_color = '4' #'blue'
 
 move_time = 0 #0.005
-ball_time = 0.05 #0.1
+ball_time = 0 #0.1
 
 scale = 'tens'
 
-right_move_icon = colored('#', move_color) #\\
-left_move_icon = colored('#', move_color) #/
+images = []
+
+def demo(screen):
+    effects = [
+        Print(
+            screen, StaticRenderer(images=images) ,
+            screen.height // 2 - 8, speed=1)
+    ]
+    screen.play([Scene(effects, 0)])
+
+right_move_icon = '\\'
+left_move_icon = '/'
+print('Hi!')
+#right_move_icon = format(right_move_icon, move_color) #\\
+#left_move_icon = format(left_move_icon, move_color) #/
 
 def format(string, color):
     if color:
-        return colored(string, color)
+        return r"""${""" + color + r"""}""" + string
     else:
         return string
 
@@ -33,23 +51,25 @@ for k in range(0, n):
 output = [' '*(n*2)]
 for ball in range(1, N+1):
     pos = 0
-    quincunx = list(map(lambda s : colored(s, quincunx_color), raw_quincunx))
+    quincunx = list(map(lambda s : format(s, quincunx_color), raw_quincunx))
     for k in range(n):
         sleep(move_time)
         #print(to_print)
         if choice((True, False)):
-            quincunx[k] = format(raw_quincunx[k][:n+pos], quincunx_color) + right_move_icon + format(raw_quincunx[k][n+pos+1:], quincunx_color)
+            quincunx[k] = format(raw_quincunx[k][:n+pos], quincunx_color) + format(right_move_icon, move_color) + format(raw_quincunx[k][n+pos+1:], quincunx_color)
             pos += 1
         else:
-            quincunx[k] = format(raw_quincunx[k][:n+pos-1], quincunx_color) + left_move_icon + format(raw_quincunx[k][n+pos:], quincunx_color)
+            quincunx[k] = format(raw_quincunx[k][:n+pos-1], quincunx_color) + format(left_move_icon, move_color) + format(raw_quincunx[k][n+pos:], quincunx_color)
             pos -= 1
         if k == n-1 or move_time > 0:
-            system('clear')
+            #system('clear')
             to_print = quincunx[:]
             to_print.insert(0, f'Move time: {move_time}. Rest time: {ball_time}. Ball {ball} of {N}.')
-            to_print.append(' '*(n+pos)+colored('X', output_color))
-            to_print.append(colored('\n'.join(output), output_color))
-            print('\n'.join(to_print))
+            to_print.append(' '*(n+pos)+format('X', output_color))
+            to_print.append(format('\n'.join(output), output_color))
+            to_print = (('\n'.join(to_print)))
+            #image = to_print
+            images.append(to_print)
     sleep(ball_time)
     bins[n+pos] += 1
     for i, count in enumerate(bins):
@@ -67,4 +87,7 @@ for ball in range(1, N+1):
                             + 'X'
                             + output[row][i+1:])
         output[big] = output[big][:i] + (str(small) if count > 0 else ' ') + output[big][i+1:]
+print('3, 2, 1, okay...')
+#sleep(5)
+Screen.wrapper(demo)
 
