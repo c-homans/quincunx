@@ -13,6 +13,9 @@ move_color = 'blue'
 quincunx_color = None
 output_color = 'blue'
 
+move_time = 0.005
+ball_time = 0.1
+
 right_move_icon = colored('\\', move_color) #\\
 left_move_icon = colored('/', move_color) #/
 
@@ -26,6 +29,7 @@ for ball in range(N):
     to_print = quincunx[:]
     offset = 0
     for k in range(n):
+        sleep(move_time)
         if choice((True, False)):
             to_print[k] = to_print[k][:n+offset] + right_move_icon + to_print[k][n+offset+1:]
             offset += 1
@@ -37,7 +41,7 @@ for ball in range(N):
             print('\n'.join(to_print))
             print(' '*(n+offset)+colored('X', output_color))
             print(colored('\n'.join(output), output_color))
-    #sleep(0.01)
+    sleep(ball_time)
     bins[n+offset] += 1
     for i, count in enumerate(bins):
         hunds = count // 100
