@@ -26,7 +26,7 @@ def draw_frame():
     to_print = qc[:]
     to_print.insert(
         0, f'Move time: {move_time}. Rest time: {ball_time}. Ball {ball} of {N}.')
-    to_print.append(' '*(n+pos)+colored('+', output_color))
+    to_print.append(' '*(n+pos)+(colored('+', output_color)) if ball else '\n')
     to_print.append(colored('\n'.join(output), output_color))
     to_print.insert(0, clear)
     print('\n'.join(to_print))
@@ -70,11 +70,11 @@ def update_output_bin(i, count):
                   + output[big][i+1:] )
 
 args = get_arguments()
-n = args.n
-N = args.B
+n = int(args.n)
+N = int(args.B)
 scale = args.scale
-move_time = args.move #0.005
-ball_time = args.rest #0.1
+move_time = float(args.move) #0.005
+ball_time = float(args.rest) #0.1
 move_color = args.move_color #'blue'
 quincunx_color = args.quincunx_color #None
 output_color = args.output_color #'blue'
@@ -84,10 +84,13 @@ left_move_icon = colored(args.lmove, move_color)  # /
 raw_qc = create_raw_quincunx()
 bins = [0]*(n*2)
 output = [' '*(n*2)]
+qc = list(map(lambda s: colored(s, quincunx_color), raw_qc))
+ball = 0
+draw_frame()
+sleep(2)
 
 for ball in range(1, N+1):
     pos = 0
-    qc = list(map(lambda s : colored(s, quincunx_color), raw_qc))
     for k in range(n):
         sleep(move_time)
         pos = update_quincunx(k, pos) 
