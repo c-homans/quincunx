@@ -49,7 +49,7 @@ def update_quincunx(k, pos):
                  + colored(raw_qc[k][n+pos+1:], quincunx_color) )
         pos += 1
     else:
-        qc[k] =  (colored(raw_qc[k][:n+pos-1], quincunx_color)
+        qc[k] =  ( colored(raw_qc[k][:n+pos-1], quincunx_color)
                  + left_move_icon
                  + colored(raw_qc[k][n+pos:], quincunx_color) )
         pos -= 1
