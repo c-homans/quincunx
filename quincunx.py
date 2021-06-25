@@ -37,7 +37,7 @@ def create_raw_quincunx():
         d = k+1
         raw_quincunx[k] = ( raw_quincunx[k][:n-d]
                           + '/\\'*(d)
-                          + raw_quincunx[k][n+d:])
+                          + raw_quincunx[k][n+d:] )
     return raw_quincunx
 
 def update_quincunx(k, pos):
